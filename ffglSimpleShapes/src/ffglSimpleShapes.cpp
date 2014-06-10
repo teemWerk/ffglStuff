@@ -29,6 +29,7 @@
 
 #define	FFPARAM_Mode	(0)
 #define FFPARAM_Rotation (1)
+#define FFPARAM_Radius (2)
 
 bool hastime = false;	//workaround for hosts without Time support
 
@@ -107,8 +108,10 @@ FFGLStaticSource::FFGLStaticSource()
 	// parameters:
 	SetParamInfo(FFPARAM_Mode, "Sides", FF_TYPE_STANDARD, 0.5f);
 	SetParamInfo(FFPARAM_Rotation, "Rotation", FF_TYPE_STANDARD, 0.0f);
+	SetParamInfo(FFPARAM_Radius, "Radius", FF_TYPE_STANDARD, 0.5f);
 	m_mode = 0.5f;
 	m_rotation = 0.0f;
+	m_radius = 0.5f;
 }
 
 DWORD FFGLStaticSource::SetTime(double time)
@@ -211,7 +214,9 @@ DWORD FFGLStaticSource::ProcessOpenGL(ProcessOpenGLStruct *pGL)
 	//the vertex shader and fragment shader refer to this when querying for
 	//texture coordinates of the inputTexture
 	
-	glm::vec2 vec = glm::vec2(0.0, 200.0);
+	float fhheight = m_height / 2;
+
+	glm::vec2 vec = glm::vec2(0.0, m_radius * fhheight);
 	vec = glm::rotate(vec, 2 * 3.14159f * m_rotation);
 	glPushMatrix();
 	glLoadMatrixf(&MVP[0][0]);
@@ -255,6 +260,9 @@ DWORD FFGLStaticSource::GetParameter(DWORD dwIndex)
 	case FFPARAM_Rotation:
 		*((float *)(unsigned)&dwRet) = m_rotation;
 		return dwRet;
+	case FFPARAM_Radius:
+		*((float *)(unsigned)&dwRet) = m_radius;
+		return dwRet;
 	default:
 		return FF_FAIL;
 	}
@@ -283,14 +291,16 @@ char* FFGLStaticSource::GetParameterDisplay(DWORD dwIndex)
 					sprintf(m_Displayvalue, "%s", "Two-tone");
 				break;
 			case FFPARAM_Rotation:
-				if (m_mode < 0.33)
+				if (m_rotation < 0.33)
 					sprintf(m_Displayvalue, "%s", "Slight");
-				else if (m_mode < 0.66)
+				else if (m_rotation < 0.66)
 					sprintf(m_Displayvalue, "%s", "More");
 				else
 					sprintf(m_Displayvalue, "%s", "Most");
 				break;
-
+			case FFPARAM_Radius:
+				sprintf(m_Displayvalue, "%s", "Radius");
+				break;
 			default:
 				return NULL;
 			}
@@ -309,6 +319,9 @@ DWORD FFGLStaticSource::SetParameter(const SetParameterStruct* pParam)
 			break;
 		case FFPARAM_Rotation:
 			m_rotation = *((float *)&(pParam->NewParameterValue));
+			break;
+		case FFPARAM_Radius:
+			m_radius = *((float *)&(pParam->NewParameterValue));
 			break;
 		default:
 			return FF_FAIL;

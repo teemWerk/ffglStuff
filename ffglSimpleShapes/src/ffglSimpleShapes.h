@@ -39,6 +39,7 @@ protected:
 	// Parameters
 	float m_mode;
 	float m_rotation;
+	float m_radius;
 
 	int m_initResources;
 	double m_time;
