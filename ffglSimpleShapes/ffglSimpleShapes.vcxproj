@@ -101,6 +101,9 @@
       <AdditionalDependencies>OpenGL32.lib;GLU32.LIB;glut32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>..\ffglStuff.def</ModuleDefinitionFile>
     </Link>
+    <PostBuildEvent>
+      <Command>copy $(ProjectDir)\Release\$(ProjectName).dll $(ProjectDir)\..\bin</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
